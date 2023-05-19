@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.stripe.stripeterminal.Terminal
 import com.stripe.stripeterminal.TerminalApplicationDelegate
-import com.stripe.stripeterminal.external.OnReaderTips
 import com.stripe.stripeterminal.external.callable.*
 import com.stripe.stripeterminal.external.models.*
 import com.stripe.stripeterminal.log.LogLevel
@@ -93,7 +92,6 @@ class StripeTerminalPlugin : FlutterPlugin, MethodCallHandler,
         channel.invokeMethod("onNativeLog", log)
     }
 
-    @OptIn(OnReaderTips::class)
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "init" -> {
@@ -102,13 +100,14 @@ class StripeTerminalPlugin : FlutterPlugin, MethodCallHandler,
                 }
             }
             "clearReaderDisplay" -> {
-                Terminal.getInstance().clearReaderDisplay(object :Callback{
+                Terminal.getInstance().clearReaderDisplay(object : Callback {
                     override fun onFailure(e: TerminalException) {
                         return result.error(
                             "stripeTerminal#unableToClearDisplay",
                             e.errorMessage,
                             e.stackTraceToString()
-                        )                    }
+                        )
+                    }
 
                     override fun onSuccess() {
                         result.success(true)
